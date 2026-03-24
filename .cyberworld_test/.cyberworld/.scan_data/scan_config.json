@@ -1,7 +1,0 @@
-{
-  "scan_interval_sec": 5,
-  "log_format": "csv",
-  "log_location": ".cyberworld/.scan_data/",
-  "max_log_size_mb": 1,
-  "auto_rotate": true
-}
