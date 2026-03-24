@@ -86,7 +86,7 @@ data/cve/*.db
 digests/
 
 # ─── Pre-commit ────────────────────────────────────────
-.secrets.baseline
+# .secrets.baseline is intentionally tracked to store reviewed false-positive audit
 
 # ─── HTML previews (exclude web frontend) ────────────────
 *.html

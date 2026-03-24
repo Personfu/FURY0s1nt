@@ -1,0 +1,74 @@
+name: Sensitive Path Review
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'payloads/**'
+      - 'usb_payload/**'
+      - 'firmware/**'
+      - 'flipper/**'
+      - 'mobile/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: sensitive-path-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flag-sensitive-paths:
+    name: Flag sensitive path changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Identify changed sensitive paths
+        id: changed-paths
+        run: |
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" 2>/dev/null | \
+            grep -E '^(payloads|usb_payload|firmware|flipper|mobile)/' || true)
+          {
+            echo "changed_files<<EOF"
+            echo "$CHANGED"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Add review label and comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          FILES="${{ steps.changed-paths.outputs.changed_files }}"
+          if [ -z "$FILES" ]; then
+            echo "No sensitive paths detected in diff"
+            exit 0
+          fi
+
+          BODY="## :warning: Sensitive Path Review Required
+
+          This PR modifies files in restricted directories that require maintainer sign-off.
+
+          **Changed paths:**
+          \`\`\`
+          $FILES
+          \`\`\`
+
+          ### Required checklist before merge
+
+          - [ ] Change is authorized and has a documented research or defensive purpose
+          - [ ] No active exploit payloads are introduced without a clearly scoped test fixture
+          - [ ] No credentials, API keys, or device-specific secrets are present
+          - [ ] Documentation in the relevant module README has been updated
+          - [ ] A maintainer has reviewed and approved this change
+
+          cc @Personfu"
+
+          gh pr comment ${{ github.event.pull_request.number }} --body "$BODY"
+          gh pr edit ${{ github.event.pull_request.number }} \
+            --add-label "needs-maintainer-review" 2>/dev/null || \
+            echo "Label not found -- skipping label step"

@@ -14,9 +14,14 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: integrity-update
+  cancel-in-progress: false
+
 jobs:
   update-checksums:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 

@@ -7,12 +7,17 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   issues: write
+
+concurrency:
+  group: dependency-audit
+  cancel-in-progress: false
 
 jobs:
   audit-dependencies:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -23,12 +28,36 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Check for known vulnerabilities
+      - name: Check for known vulnerabilities and generate SBOM
         run: |
           pip install pip-audit
           echo "=== Auditing installed packages ==="
+          # Generate JSON report and CycloneDX SBOM in one pass
           pip-audit --format json --output audit-results.json 2>/dev/null || true
-          pip-audit 2>/dev/null || true
+          pip-audit --format cyclonedx-json --output sbom.json 2>/dev/null || true
+          # Fail on fixable vulnerabilities
+          CRITICAL=$(python - << 'PYEOF'
+          import json, sys
+          try:
+              with open('audit-results.json') as fh:
+                  data = json.load(fh)
+              count = sum(
+                  1 for dep in data.get('dependencies', [])
+                  for v in dep.get('vulns', [])
+                  if v.get('fix_versions')
+              )
+              print(count)
+          except Exception:
+              print(0)
+          PYEOF
+          )
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "::error::pip-audit found $CRITICAL fixable vulnerability/vulnerabilities -- address before merge"
+            pip-audit 2>&1 || true
+            exit 1
+          else
+            pip-audit 2>/dev/null || true
+          fi
 
       - name: Check for outdated packages
         run: |
@@ -45,6 +74,17 @@ jobs:
               for p in pkgs:
                   print(f'  {p[\"name\"]}: {p[\"version\"]} -> {p[\"latest_version\"]}')
           "
+
+      - name: Upload audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-${{ github.run_id }}
+          path: |
+            audit-results.json
+            sbom.json
+            outdated.json
+          retention-days: 90
 
       - name: Create issue if vulnerabilities found
         env:
@@ -65,6 +105,6 @@ jobs:
           if [ "$VULNS" -gt 0 ]; then
             gh issue create \
               --title "Dependency vulnerability detected ($(date -u +%Y-%m-%d))" \
-              --body "pip-audit found $VULNS vulnerable package(s). Run \`pip-audit\` locally for details." \
+              --body "pip-audit found $VULNS vulnerable package(s). Run \`pip-audit\` locally for details. Audit artifacts are attached to workflow run ${{ github.run_id }}." \
               --label "security" 2>/dev/null || echo "Could not create issue (label may not exist)"
           fi
