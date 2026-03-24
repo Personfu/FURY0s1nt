@@ -29,7 +29,7 @@ jobs:
 
       - name: Commit if changed
         run: |
-          git config user.name "PrestonFurulie"
+          git config user.name "PersonFu"
           git config user.email "Personfu@users.noreply.github.com"
           git add CHECKSUMS.sha256
           if git diff --cached --quiet; then

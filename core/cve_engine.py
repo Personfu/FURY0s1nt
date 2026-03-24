@@ -318,15 +318,18 @@ class NVDClient:
             params["pubStartDate"] = self._iso_date(start_date)
         else:
             week_ago = datetime.now(timezone.utc) - timedelta(days=30)
-            params["pubStartDate"] = week_ago.strftime("%Y-%m-%dT%H:%M:%S.000")
+            params["pubStartDate"] = week_ago.strftime("%Y-%m-%dT%H:%M:%S.000 +00:00")
         vulns = self._paginate(params, max_results)
         return [self._parse_cve(v) for v in vulns]
 
     @staticmethod
     def _iso_date(date_str: str) -> str:
+        import re
         date_str = date_str.strip()
         if "T" not in date_str:
             date_str += "T00:00:00.000"
+        if not re.search(r'(Z|[+-]\d{2}:\d{2})$', date_str):
+            date_str += " +00:00"
         return date_str
 
 
@@ -686,9 +689,9 @@ class CVEDatabase:
 
     def sync_nvd(self, nvd: "NVDClient", days_back: int = 30) -> int:
         start = (datetime.now(timezone.utc) - timedelta(days=days_back)).strftime(
-            "%Y-%m-%dT00:00:00.000"
+            "%Y-%m-%dT00:00:00.000 +00:00"
         )
-        end = datetime.now(timezone.utc).strftime("%Y-%m-%dT23:59:59.999")
+        end = datetime.now(timezone.utc).strftime("%Y-%m-%dT23:59:59.999 +00:00")
         C.info(f"Syncing NVD CVEs from last {days_back} days ...")
         vulns = nvd._paginate({"pubStartDate": start, "pubEndDate": end}, max_results=2000)
         count = 0
