@@ -18,7 +18,26 @@ concurrency:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  lint-workflows:
+    name: Lint GitHub Actions workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install actionlint
+        run: |
+          curl -sL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash | bash
+          sudo mv actionlint /usr/local/bin/
+
+      - name: Run actionlint
+        run: actionlint
+
   validate-python:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -39,14 +58,14 @@ jobs:
         run: |
           echo "=== Compiling all .py files ==="
           FAIL=0
-          for f in $(find core/ payloads/ scripts/ -name '*.py' -type f); do
+          while IFS= read -r -d '' f; do
             if python -m py_compile "$f" 2>&1; then
               echo "  OK: $f"
             else
               echo "  FAIL: $f"
               FAIL=1
             fi
-          done
+          done < <(find core/ payloads/ scripts/ -name '*.py' -type f -print0)
           if [ "$FAIL" -eq 1 ]; then
             echo "::error::One or more Python files failed syntax check"
             exit 1

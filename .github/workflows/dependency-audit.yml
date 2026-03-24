@@ -14,6 +14,10 @@ permissions:
   contents: read
   issues: write
 
+concurrency:
+  group: dependency-audit
+  cancel-in-progress: false
+
 jobs:
   audit-dependencies:
     runs-on: ubuntu-latest
@@ -30,9 +34,10 @@ jobs:
           pip install -r requirements.txt
           pip install pip-audit cyclonedx-bom
 
-      - name: Check for known vulnerabilities
+      - name: Check for known vulnerabilities and generate SBOM
         run: |
           echo "=== Auditing installed packages ==="
+
           pip-audit --format json --output audit-results.json
           pip-audit
 
@@ -85,6 +90,6 @@ jobs:
           if [ "$VULNS" -gt 0 ]; then
             gh issue create \
               --title "Dependency vulnerability detected ($(date -u +%Y-%m-%d))" \
-              --body "pip-audit found $VULNS vulnerable package(s). Run \`pip-audit\` locally for details." \
+              --body "pip-audit found $VULNS vulnerable package(s). Run \`pip-audit\` locally for details. Audit artifacts are attached to workflow run ${{ github.run_id }}." \
               --label "security" 2>/dev/null || echo "Could not create issue (label may not exist)"
           fi

@@ -18,6 +18,10 @@ concurrency:
 permissions:
   contents: write
 
+concurrency:
+  group: integrity-update
+  cancel-in-progress: false
+
 jobs:
   update-checksums:
     runs-on: ubuntu-latest
