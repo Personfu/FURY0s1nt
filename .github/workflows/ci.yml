@@ -11,6 +11,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   validate-python:
     runs-on: ubuntu-latest
@@ -101,6 +104,22 @@ jobs:
             exit 1
           }
           Write-Host "All PowerShell scripts passed syntax validation"
+
+  cve-engine-tests:
+    runs-on: ubuntu-latest
+    needs: [validate-python]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run CVE engine regression tests
+        run: python scripts/test_cve_engine.py
 
   integrity-check:
     runs-on: ubuntu-latest

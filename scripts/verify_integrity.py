@@ -61,9 +61,7 @@ def verify_manifest(filepath: str = DEFAULT_MANIFEST, diff_only: bool = False) -
         sys.exit(1)
 
     expected = load_manifest(filepath)
-    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(filepath)))
-    if filepath == DEFAULT_MANIFEST:
-        root_dir = os.path.dirname(os.path.abspath(filepath))
+    root_dir = os.path.dirname(os.path.abspath(filepath))
 
     passed = 0
     failed = 0
