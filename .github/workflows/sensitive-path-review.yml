@@ -1,0 +1,51 @@
+name: Sensitive Path Review
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'payloads/**'
+      - 'usb_payload/**'
+      - 'firmware/**'
+      - 'flipper/**'
+      - 'mobile/**'
+
+concurrency:
+  group: sensitive-path-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  gate-sensitive-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Label PR for elevated review
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: ['security-review', 'sensitive-scope']
+            });
+
+      - name: Require safety checklist
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = (context.payload.pull_request.body || '').toLowerCase();
+            const required = [
+              'i confirm i have written authorization for any real-world testing',
+              'i confirm this change is for defensive research, detection, or auditing',
+              'i confirm no operational payload is enabled by default'
+            ];
+
+            const missing = required.filter((item) => !body.includes(item));
+            if (missing.length > 0) {
+              core.setFailed('Missing required safety checklist items in PR body.');
+            }

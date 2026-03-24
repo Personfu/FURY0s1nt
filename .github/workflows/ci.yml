@@ -11,12 +11,17 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
   validate-python:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       matrix:
         python-version: ['3.9', '3.11', '3.12']
@@ -78,6 +83,7 @@ jobs:
 
   validate-powershell:
     runs-on: windows-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -107,6 +113,7 @@ jobs:
 
   cve-engine-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [validate-python]
     steps:
       - uses: actions/checkout@v4
@@ -123,6 +130,7 @@ jobs:
 
   integrity-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [validate-python]
     steps:
       - uses: actions/checkout@v4

@@ -11,12 +11,17 @@ on:
       - 'web/**'
       - 'scripts/**'
 
+concurrency:
+  group: integrity-update
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
 jobs:
   update-checksums:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 

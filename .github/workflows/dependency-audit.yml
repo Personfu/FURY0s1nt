@@ -6,13 +6,18 @@ on:
     - cron: '0 9 * * 1'
   workflow_dispatch:
 
+concurrency:
+  group: dependency-audit-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
-  contents: write
+  contents: read
   issues: write
 
 jobs:
   audit-dependencies:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -21,19 +26,20 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install pip-audit cyclonedx-bom
 
       - name: Check for known vulnerabilities
         run: |
-          pip install pip-audit
           echo "=== Auditing installed packages ==="
-          pip-audit --format json --output audit-results.json 2>/dev/null || true
-          pip-audit 2>/dev/null || true
+          pip-audit --format json --output audit-results.json
+          pip-audit
 
       - name: Check for outdated packages
         run: |
           echo "=== Checking for outdated packages ==="
-          pip list --outdated --format json > outdated.json 2>/dev/null || true
+          pip list --outdated --format json > outdated.json
           python -c "
           import json
           with open('outdated.json') as f:
@@ -46,7 +52,21 @@ jobs:
                   print(f'  {p[\"name\"]}: {p[\"version\"]} -> {p[\"latest_version\"]}')
           "
 
+      - name: Generate Python SBOM
+        run: cyclonedx-py requirements requirements.txt --output-file sbom.cdx.json --output-format JSON
+
+      - name: Upload dependency artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-artifacts
+          path: |
+            audit-results.json
+            outdated.json
+            sbom.cdx.json
+          if-no-files-found: error
+
       - name: Create issue if vulnerabilities found
+        if: github.event_name == 'schedule'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
