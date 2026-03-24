@@ -75,9 +75,16 @@ No warranty is provided for unauthorized use. See `LICENSE` and `SECURITY.md` fo
 ## Engineering Artifacts
 
 - Architecture: `docs/ARCHITECTURE.md`
+- Governance: `docs/REPO_GOVERNANCE.md`
 - Roadmap: `ROADMAP.md`
 - Changelog: `CHANGELOG.md`
 - Demo output path: `data/cve/demo_report.json`
+
+## Maintainer Controls
+
+- CODEOWNERS enforces default ownership for core and sensitive paths.
+- Issue templates steer public contributions into docs, research, and safe contribution lanes.
+- Branch protection should require CI, CodeQL, Scorecard, secret scanning, workflow linting, and sensitive-path review.
 
 ## Repository Layout
 

@@ -11,6 +11,9 @@
 - Pull request template with required safety checklist
 - Local demo report generator: scripts/demo_report.py
 - Architecture overview document: docs/ARCHITECTURE.md
+- Repository governance guide: docs/REPO_GOVERNANCE.md
+- CODEOWNERS for default and sensitive-scope ownership
+- Issue templates for docs, research, and safe-contrib intake
 - Public roadmap document: ROADMAP.md
 
 ### Changed
