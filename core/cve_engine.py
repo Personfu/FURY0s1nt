@@ -1004,6 +1004,7 @@ examples:
     kv.add_argument("--keyword", default=None, help="Search KEV catalog")
     kv.add_argument("--recent", type=int, default=None, help="Recent KEV entries (days)")
     kv.add_argument("--format", choices=["table", "json"], default="table")
+    kv.add_argument("--output", default=None, help="Write output to file")
 
     # epss
     ep = sub.add_parser("epss", help="EPSS score lookup")
@@ -1170,9 +1171,9 @@ def main() -> None:
         if entries:
             enriched = _kev_to_enriched(entries)
             if args.format == "json":
-                C.p(reporter.to_json(enriched))
+                _write_output(reporter.to_json(enriched), args.output)
             else:
-                C.p(reporter.to_table(enriched))
+                _write_output(reporter.to_table(enriched), args.output)
 
     elif args.command == "epss":
         epss_client = EPSSClient()
