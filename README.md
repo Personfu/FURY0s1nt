@@ -39,6 +39,7 @@ The project prioritizes verifiable outputs, reviewable automation, and conservat
 pip install -r requirements.txt
 python core/cve_engine.py sync --days 7 --kev
 python core/cve_engine.py report --severity CRITICAL --days 7 --format json --output data/cve/critical_weekly.json
+python scripts/demo_report.py --output data/cve/demo_report.json
 python scripts/verify_integrity.py verify
 ```
 
@@ -69,6 +70,14 @@ No warranty is provided for unauthorized use. See `LICENSE` and `SECURITY.md` fo
 - Use Actions-generated artifacts where available.
 - Validate checksums from `CHECKSUMS.sha256`.
 - Prefer release assets with attached provenance and SBOM evidence.
+- Generate a local offline demo report with `python scripts/demo_report.py`.
+
+## Engineering Artifacts
+
+- Architecture: `docs/ARCHITECTURE.md`
+- Roadmap: `ROADMAP.md`
+- Changelog: `CHANGELOG.md`
+- Demo output path: `data/cve/demo_report.json`
 
 ## Repository Layout
 
