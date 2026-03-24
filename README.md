@@ -96,14 +96,6 @@ scripts/            Integrity and utility scripts
 docs/               Platform docs and reference material
 ```
 
-## Roadmap (Next 30 Days)
-
-1. Harden branch protection and required status checks.
-2. Publish a GitHub Pages CVE dashboard with sample reports.
-3. Ship a versioned release with SBOM + attestation evidence.
-4. Expand schema validation and test coverage for CVE/KEV outputs.
-5. Add contributor-safe issues tagged `docs`, `research`, and `good first issue`.
-
 ## License
 
 Source-available. See `LICENSE`.
