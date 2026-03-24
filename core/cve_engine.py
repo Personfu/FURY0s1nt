@@ -649,12 +649,6 @@ class CVEDatabase:
             cve.cvss.severity, json.dumps(cve.cwe_ids), json.dumps(cve.references),
             json.dumps(cve.cpe_matches), cve.published, cve.modified,
         ))
-        self.conn.execute("""
-            INSERT INTO cve_fts (rowid, cve_id, description, severity)
-            SELECT rowid, cve_id, description, severity
-            FROM cves WHERE cve_id = ?
-            ON CONFLICT DO NOTHING
-        """, (cve.cve_id,))
         self.conn.commit()
 
     def upsert_kev(self, entry: KEVEntry) -> None:
@@ -706,6 +700,7 @@ class CVEDatabase:
             INSERT INTO last_sync (source, synced_at) VALUES ('nvd', datetime('now'))
             ON CONFLICT(source) DO UPDATE SET synced_at=excluded.synced_at
         """)
+        self.conn.execute("INSERT INTO cve_fts(cve_fts) VALUES('rebuild')")
         self.conn.commit()
         C.ok(f"Synced {count} CVEs from NVD")
         return count
