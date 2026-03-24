@@ -1,17 +1,13 @@
-name: CodeQL Analysis
 
+name: CodeQL
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
   schedule:
-    - cron: '0 8 * * 1'
 
-permissions:
-  contents: read
-  security-events: write
-
+    - cron: '0 4 * * 1'
 concurrency:
   group: codeql-${{ github.ref }}
   cancel-in-progress: true
@@ -25,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [python]
+        language: [python, javascript]
 
     steps:
       - name: Checkout repository
@@ -35,12 +31,11 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          queries: security-and-quality
+
+          queries: security-extended,security-and-quality
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
-        with:
-          category: /language:${{ matrix.language }}

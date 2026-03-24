@@ -6,6 +6,10 @@ on:
     - cron: '0 9 * * 1'
   workflow_dispatch:
 
+concurrency:
+  group: dependency-audit-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   issues: write
@@ -26,43 +30,21 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install pip-audit cyclonedx-bom
 
       - name: Check for known vulnerabilities and generate SBOM
         run: |
-          pip install pip-audit
           echo "=== Auditing installed packages ==="
-          # Generate JSON report and CycloneDX SBOM in one pass
-          pip-audit --format json --output audit-results.json 2>/dev/null || true
-          pip-audit --format cyclonedx-json --output sbom.json 2>/dev/null || true
-          # Fail on fixable vulnerabilities
-          CRITICAL=$(python - << 'PYEOF'
-          import json, sys
-          try:
-              with open('audit-results.json') as fh:
-                  data = json.load(fh)
-              count = sum(
-                  1 for dep in data.get('dependencies', [])
-                  for v in dep.get('vulns', [])
-                  if v.get('fix_versions')
-              )
-              print(count)
-          except Exception:
-              print(0)
-          PYEOF
-          )
-          if [ "$CRITICAL" -gt 0 ]; then
-            echo "::error::pip-audit found $CRITICAL fixable vulnerability/vulnerabilities -- address before merge"
-            pip-audit 2>&1 || true
-            exit 1
-          else
-            pip-audit 2>/dev/null || true
-          fi
+
+          pip-audit --format json --output audit-results.json
+          pip-audit
 
       - name: Check for outdated packages
         run: |
           echo "=== Checking for outdated packages ==="
-          pip list --outdated --format json > outdated.json 2>/dev/null || true
+          pip list --outdated --format json > outdated.json
           python -c "
           import json
           with open('outdated.json') as f:
@@ -75,18 +57,21 @@ jobs:
                   print(f'  {p[\"name\"]}: {p[\"version\"]} -> {p[\"latest_version\"]}')
           "
 
-      - name: Upload audit artifacts
-        if: always()
+      - name: Generate Python SBOM
+        run: cyclonedx-py requirements requirements.txt --output-file sbom.cdx.json --output-format JSON
+
+      - name: Upload dependency artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dependency-audit-${{ github.run_id }}
+          name: dependency-audit-artifacts
           path: |
             audit-results.json
-            sbom.json
             outdated.json
-          retention-days: 90
+            sbom.cdx.json
+          if-no-files-found: error
 
       - name: Create issue if vulnerabilities found
+        if: github.event_name == 'schedule'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

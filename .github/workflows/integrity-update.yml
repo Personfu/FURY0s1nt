@@ -11,6 +11,10 @@ on:
       - 'web/**'
       - 'scripts/**'
 
+concurrency:
+  group: integrity-update
+  cancel-in-progress: true
+
 permissions:
   contents: write
 

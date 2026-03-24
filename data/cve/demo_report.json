@@ -1,0 +1,284 @@
+{
+  "meta": {
+    "report_type": "local_demo_cve_intelligence",
+    "generated_at": "2026-03-24T08:18:52.400890+00:00",
+    "record_count": 45
+  },
+  "summary": {
+    "severity_counts": {
+      "CRITICAL": 8,
+      "HIGH": 15,
+      "MEDIUM": 22
+    },
+    "top_vendors": [
+      {
+        "vendor": "Acronis",
+        "count": 19
+      },
+      {
+        "vendor": "International Datacasting Corporation (IDC)",
+        "count": 10
+      },
+      {
+        "vendor": "craftcms",
+        "count": 5
+      },
+      {
+        "vendor": "OliveTin",
+        "count": 2
+      },
+      {
+        "vendor": "NatroTeam",
+        "count": 2
+      },
+      {
+        "vendor": "ghostfolio",
+        "count": 1
+      },
+      {
+        "vendor": "middleapi",
+        "count": 1
+      },
+      {
+        "vendor": "zhongyu09",
+        "count": 1
+      },
+      {
+        "vendor": "pjsip",
+        "count": 1
+      },
+      {
+        "vendor": "OneUptime",
+        "count": 1
+      }
+    ],
+    "top_cwes": [
+      {
+        "cwe": "CWE-863",
+        "count": 8
+      },
+      {
+        "cwe": "CWE-798",
+        "count": 3
+      },
+      {
+        "cwe": "CWE-22",
+        "count": 3
+      },
+      {
+        "cwe": "CWE-1336",
+        "count": 2
+      },
+      {
+        "cwe": "CWE-94",
+        "count": 2
+      },
+      {
+        "cwe": "CWE-78",
+        "count": 2
+      },
+      {
+        "cwe": "CWE-276",
+        "count": 2
+      },
+      {
+        "cwe": "CWE-610",
+        "count": 2
+      },
+      {
+        "cwe": "CWE-639",
+        "count": 2
+      },
+      {
+        "cwe": "CWE-427",
+        "count": 2
+      }
+    ]
+  },
+  "highlights": {
+    "top_critical": [
+      {
+        "cve_id": "CVE-2026-28775",
+        "score": 10.0,
+        "severity": "CRITICAL",
+        "vendor": "International Datacasting Corporation (IDC)",
+        "product": "SFX2100 Series SuperFlex SatelliteReceiver",
+        "cwe": "CWE-1188",
+        "published": "2026-03-04T07:24:50.693Z",
+        "title": "Unauthenticated RCE via SNMP Default Writable Community String"
+      },
+      {
+        "cve_id": "CVE-2026-28697",
+        "score": 9.4,
+        "severity": "CRITICAL",
+        "vendor": "craftcms",
+        "product": "cms",
+        "cwe": "CWE-1336",
+        "published": "2026-03-04T16:26:37.476Z",
+        "title": "Craft Affected by Authenticated RCE via \"craft.app.fs.write()\" in Twig Templates"
+      },
+      {
+        "cve_id": "CVE-2026-28783",
+        "score": 9.4,
+        "severity": "CRITICAL",
+        "vendor": "craftcms",
+        "product": "cms",
+        "cwe": "CWE-94",
+        "published": "2026-03-04T16:50:27.191Z",
+        "title": "Craft has a Twig Function Blocklist Bypass"
+      },
+      {
+        "cve_id": "CVE-2026-28773",
+        "score": 9.3,
+        "severity": "CRITICAL",
+        "vendor": "International Datacasting Corporation (IDC)",
+        "product": "SFX Series SuperFlex SatelliteReceiver Web Management Interface",
+        "cwe": "CWE-78",
+        "published": "2026-03-04T07:16:58.715Z",
+        "title": "Authenticated OS Command Injection via Ping Utility Leading to RCE as Root"
+      },
+      {
+        "cve_id": "CVE-2026-28774",
+        "score": 9.3,
+        "severity": "CRITICAL",
+        "vendor": "International Datacasting Corporation (IDC)",
+        "product": "SFX Series SuperFlex SatelliteReceiver Web Management Interface",
+        "cwe": "CWE-78",
+        "published": "2026-03-04T07:22:57.677Z",
+        "title": "Authenticated OS Command Injection via Traceroute Utility leads to Root RCE"
+      },
+      {
+        "cve_id": "CVE-2026-28785",
+        "score": 9.3,
+        "severity": "CRITICAL",
+        "vendor": "ghostfolio",
+        "product": "ghostfolio",
+        "cwe": "CWE-89",
+        "published": "2026-03-06T04:27:07.645Z",
+        "title": "Ghostfolio: Time-Based Blind SQL Injection in Manual Asset Import"
+      },
+      {
+        "cve_id": "CVE-2026-28794",
+        "score": 9.3,
+        "severity": "CRITICAL",
+        "vendor": "middleapi",
+        "product": "orpc",
+        "cwe": "CWE-1321",
+        "published": "2026-03-06T05:02:19.019Z",
+        "title": "oRPC: Prototype Pollution in `@orpc/client` via `StandardRPCJsonSerializer` Deserialization"
+      },
+      {
+        "cve_id": "CVE-2026-28777",
+        "score": 9.2,
+        "severity": "CRITICAL",
+        "vendor": "International Datacasting Corporation (IDC)",
+        "product": "SFX2100 Satellite Receiver",
+        "cwe": "CWE-798",
+        "published": "2026-03-04T07:41:29.280Z",
+        "title": "Hardcoded and Insecure Credentials for \"User\" Local Account with SSH Access On IDC SFX2100 Satellite Receiver"
+      }
+    ],
+    "top_by_score": [
+      {
+        "cve_id": "CVE-2026-28775",
+        "score": 10.0,
+        "severity": "CRITICAL",
+        "vendor": "International Datacasting Corporation (IDC)",
+        "product": "SFX2100 Series SuperFlex SatelliteReceiver",
+        "cwe": "CWE-1188",
+        "published": "2026-03-04T07:24:50.693Z",
+        "title": "Unauthenticated RCE via SNMP Default Writable Community String"
+      },
+      {
+        "cve_id": "CVE-2026-28697",
+        "score": 9.4,
+        "severity": "CRITICAL",
+        "vendor": "craftcms",
+        "product": "cms",
+        "cwe": "CWE-1336",
+        "published": "2026-03-04T16:26:37.476Z",
+        "title": "Craft Affected by Authenticated RCE via \"craft.app.fs.write()\" in Twig Templates"
+      },
+      {
+        "cve_id": "CVE-2026-28783",
+        "score": 9.4,
+        "severity": "CRITICAL",
+        "vendor": "craftcms",
+        "product": "cms",
+        "cwe": "CWE-94",
+        "published": "2026-03-04T16:50:27.191Z",
+        "title": "Craft has a Twig Function Blocklist Bypass"
+      },
+      {
+        "cve_id": "CVE-2026-28773",
+        "score": 9.3,
+        "severity": "CRITICAL",
+        "vendor": "International Datacasting Corporation (IDC)",
+        "product": "SFX Series SuperFlex SatelliteReceiver Web Management Interface",
+        "cwe": "CWE-78",
+        "published": "2026-03-04T07:16:58.715Z",
+        "title": "Authenticated OS Command Injection via Ping Utility Leading to RCE as Root"
+      },
+      {
+        "cve_id": "CVE-2026-28774",
+        "score": 9.3,
+        "severity": "CRITICAL",
+        "vendor": "International Datacasting Corporation (IDC)",
+        "product": "SFX Series SuperFlex SatelliteReceiver Web Management Interface",
+        "cwe": "CWE-78",
+        "published": "2026-03-04T07:22:57.677Z",
+        "title": "Authenticated OS Command Injection via Traceroute Utility leads to Root RCE"
+      },
+      {
+        "cve_id": "CVE-2026-28785",
+        "score": 9.3,
+        "severity": "CRITICAL",
+        "vendor": "ghostfolio",
+        "product": "ghostfolio",
+        "cwe": "CWE-89",
+        "published": "2026-03-06T04:27:07.645Z",
+        "title": "Ghostfolio: Time-Based Blind SQL Injection in Manual Asset Import"
+      },
+      {
+        "cve_id": "CVE-2026-28794",
+        "score": 9.3,
+        "severity": "CRITICAL",
+        "vendor": "middleapi",
+        "product": "orpc",
+        "cwe": "CWE-1321",
+        "published": "2026-03-06T05:02:19.019Z",
+        "title": "oRPC: Prototype Pollution in `@orpc/client` via `StandardRPCJsonSerializer` Deserialization"
+      },
+      {
+        "cve_id": "CVE-2026-28777",
+        "score": 9.2,
+        "severity": "CRITICAL",
+        "vendor": "International Datacasting Corporation (IDC)",
+        "product": "SFX2100 Satellite Receiver",
+        "cwe": "CWE-798",
+        "published": "2026-03-04T07:41:29.280Z",
+        "title": "Hardcoded and Insecure Credentials for \"User\" Local Account with SSH Access On IDC SFX2100 Satellite Receiver"
+      },
+      {
+        "cve_id": "CVE-2026-28795",
+        "score": 8.7,
+        "severity": "HIGH",
+        "vendor": "zhongyu09",
+        "product": "openchatbi",
+        "cwe": "CWE-22",
+        "published": "2026-03-06T06:21:52.789Z",
+        "title": "OpenChatBI: Critical Path Traversal Vulnerability in save_report Tool of OpenChatBI"
+      },
+      {
+        "cve_id": "CVE-2026-28799",
+        "score": 8.7,
+        "severity": "HIGH",
+        "vendor": "pjsip",
+        "product": "pjproject",
+        "cwe": "CWE-416",
+        "published": "2026-03-06T06:36:55.109Z",
+        "title": "PJSIP: Heap use-after-free in PJSIP presence subscription termination handler"
+      }
+    ]
+  }
+}
